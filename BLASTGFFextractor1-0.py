@@ -39,13 +39,17 @@ df5 = pd.DataFrame() #creating the final dataframe (empty by now)
 """  loop to find rows in df columns which contain something between a range of values;
      (find rows with a chromosome/scaffold and then look for row between base pairs).    """
 
+counter = 0 #creating counter to check the proportion of hits with neighbor
+
 for i in range(len(var1)):
     if var3[i] > var2[i]:
+	counter += 1
         df3 = df2[df2['Cromossomo'] == var1[i]]
         df4 = df3[((var2[i]-10000) <= df3['pbinicio']) & (df3['pbfim'] <= (var3[i]+10000))]
         #here you can change the additional downstream/upstream base pair portion for extraction.
         df5 = df5.append(df4)
     else:
+	counter += 1
         df3 = df2[df2['Cromossomo'] == var1[i]]
         df4 = df3[((var3[i]-10000) <= df3['pbinicio']) & (df3['pbfim'] <= (var2[i]+10000))]
         df5 = df5.append(df4)
@@ -60,3 +64,8 @@ try:
     df5.to_csv(sys.argv[3], index=False) #save the final dataframe to an csv.
 except:
     df5.to_csv(input("Output File: "), index=False)
+
+file = open("counter.txt", "w")
+counter = str(counter)
+file.write("Counter = " + counter + " hits with neighboor.")
+file.close()
